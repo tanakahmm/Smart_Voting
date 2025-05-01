@@ -1,62 +1,55 @@
 package com.smartvote.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
 @Data
-@Document(collection = "users")
+@NoArgsConstructor
+@AllArgsConstructor
+@Table("users")
 public class User implements UserDetails {
     @Id
     private String id;
-
-    @Indexed(unique = true)
+    private String username;
     private String email;
-    
     private String password;
-    private String firstName;
-    private String lastName;
-    private String role; // ROLE_VOTER, ROLE_ORGANIZER, ROLE_ADMIN
-    private String faceData; // Base64 encoded face data
-    private boolean enabled = true;
-    private boolean accountNonExpired = true;
-    private boolean accountNonLocked = true;
-    private boolean credentialsNonExpired = true;
+    private String role;
+    private String faceFeatures;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return accountNonExpired;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return accountNonLocked;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return credentialsNonExpired;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return true;
     }
 } 
